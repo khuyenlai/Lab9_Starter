@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lab 9</title>
 
   <style>
@@ -42,11 +41,18 @@
       row-gap: 5px;
     }
 
-    #error-btns>* {
+    #error-btns > * {
       padding: 8px 2px;
       width: 122px;
     }
   </style>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "49e5efd9ee7e4ef4a5ef5152ebc6e5c6"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+</script>
 </head>
 
 <body>
@@ -88,21 +94,123 @@
   </main>
 
   <script>
-    let form = document.querySelector('form');
-    form.addEventListener('submit', e => {
+    const form = document.querySelector('form');
+    const output = document.querySelector('output');
+    const errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    let timerStarted = false;
+    let groupStarted = false;
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      const firstNum = document.querySelector('#first-num').value;
+      const secondNum = document.querySelector('#second-num').value;
+      const operator = document.querySelector('#operator').value;
+      //output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      const expression = `${firstNum} ${operator} ${secondNum}`;
+
+      try{
+        const result = eval(expression);
+        if(isNaN(result)) throw new Error("Result is NaN");
+      } catch (err) {
+        console.log("Sadly an error happened my friend");
+        throw err;
+      }
     });
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    errorBtns.forEach(button => {
+      button.addEventListener('click', () => {
+        const label = button.textContent;
+        switch (label) {
+          case "Console Log":
+            console.log("Console log demo");
+            break;
 
-    // Start your code here
-    // You may move this JS to another file if you wish
+          case "Console Error":
+            console.error("Console Error Demo");
+            break;
+
+          case "Console Count":
+            console.count("Count Button");
+            break;
+
+          case "Console Warn":
+            console.warn("Console Warn Button");
+            break;
+
+          case "Console Assert":
+            const number = 2;
+            console.assert(number === 3, { number, errorMsg: "The number does not equal 3" });
+            break;
+
+          case "Console Clear":
+            console.clear();
+            break;
+
+          case "Console Dir":
+            console.dir(button);
+            break;
+
+          case "Console dirxml":
+            console.dirxml(button);
+            break;
+
+          case "Console Group Start":
+            if (!groupStarted) {
+              console.group("Console Group");
+              groupStarted = true;
+            }
+            break;
+
+          case "Console Group End":
+            if (groupStarted) {
+              console.groupEnd();
+              groupStarted = false;
+            }
+            break;
+
+          case "Console Table":
+            console.table([
+              { name: "Software Engineering", num: 110 },
+              { name: "Programming Languages", num: 130 },
+              { name: "Advanced Software", num: 112 }
+            ]);
+            break;
+
+          case "Start Timer":
+            if (!timerStarted) {
+              console.time("Timer Button");
+              timerStarted = true;
+            }
+            break;
+
+          case "End Timer":
+            if (timerStarted) {
+              console.timeEnd("Timer Button");
+              timerStarted = false;
+            }
+            break;
+
+          case "Console Trace":
+            function deepest() {
+              console.trace();
+            }
+            function deeper() {
+              deepest();
+            }
+            function deep() {
+              deeper();
+            }
+            deep();
+            break;
+
+          case "Trigger a Global Error":
+            console.log("Sadly an error happened my friend");
+            boom;
+            break;
+        }
+      });
+    });
   </script>
 </body>
-
 </html>
